@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Trends 簡化版範例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .trend-chart {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>📊 Google Trends 簡化版範例</h1>
+
+    <h2>單一關鍵字分析：黃金</h2>
+    <iframe class="trend-chart"
+        src="https://trends.google.com/trends/embed/explore/TIMESERIES?req=%7B%22comparisonItem%22%3A%5B%7B%22keyword%22%3A%22%E9%BB%83%E9%87%91%22%2C%22geo%22%3A%22TW%22%2C%22time%22%3A%22today%2012-m%22%7D%5D%2C%22category%22%3A0%2C%22property%22%3A%22%22%7D&tz=-480">
+    </iframe>
+
+    <p><strong>說明：</strong>這是一個最簡化的 Google Trends 嵌入範例，展示「黃金」關鍵字在台灣地區過去12個月的搜尋趨勢。</p>
+
+    <h2>使用方法</h2>
+    <ol>
+        <li>複製此 HTML 程式碼</li>
+        <li>修改 iframe 的 src 屬性中的關鍵字</li>
+        <li>調整地區代碼和時間範圍</li>
+        <li>儲存並在瀏覽器中開啟</li>
+    </ol>
+
+    <h2>參數說明</h2>
+    <ul>
+        <li><strong>keyword</strong>：搜尋關鍵字（需要URL編碼）</li>
+        <li><strong>geo</strong>：地區代碼（TW=台灣, US=美國, JP=日本等）</li>
+        <li><strong>time</strong>：時間範圍（today 12-m = 過去12個月）</li>
+    </ul>
+</body>
+
+</html>

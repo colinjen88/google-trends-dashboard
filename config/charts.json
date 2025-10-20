@@ -1,0 +1,45 @@
+{
+  "charts": [
+    {
+      "id": "chart-1",
+      "title": "金條 - 搜尋趨勢",
+      "keyword": "金條",
+      "geo": "TW",
+      "time": "today 1-m",
+      "emoji": "📊",
+      "isDefault": true
+    },
+    {
+      "id": "chart-2", 
+      "title": "黃金價格 - 搜尋趨勢",
+      "keyword": "黃金 價格",
+      "geo": "TW",
+      "time": "today 1-m",
+      "emoji": "💰",
+      "isDefault": true
+    },
+    {
+      "id": "chart-3",
+      "title": "投資黃金 - 搜尋趨勢", 
+      "keyword": "投資黃金",
+      "geo": "TW",
+      "time": "today 1-m",
+      "emoji": "📈",
+      "isDefault": true
+    },
+    {
+      "id": "chart-4",
+      "title": "銀行黃金 - 搜尋趨勢",
+      "keyword": "銀行黃金",
+      "geo": "TW", 
+      "time": "today 1-m",
+      "emoji": "🏦",
+      "isDefault": true
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-10-20",
+    "description": "Google Trends Dashboard 預設圖表設定"
+  }
+}

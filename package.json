@@ -1,0 +1,53 @@
+{
+  "name": "google-trends-dashboard",
+  "version": "1.0.0",
+  "description": "一個現代化的 Google Trends 資料視覺化工具，支援無限新增關鍵字圖表、響應式設計和滿版展示",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "dev": "npx live-server --port=8080",
+    "lint": "npx eslint assets/js/",
+    "format": "npx prettier --write \"**/*.{html,css,js,md}\"",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"靜態專案，無需建置\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/google-trends-dashboard.git"
+  },
+  "keywords": [
+    "google-trends",
+    "data-visualization",
+    "dashboard",
+    "analytics",
+    "responsive-design",
+    "javascript",
+    "html5",
+    "css3",
+    "趨勢分析",
+    "資料視覺化",
+    "儀表板"
+  ],
+  "author": "GitHub Copilot",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/your-username/google-trends-dashboard/issues"
+  },
+  "homepage": "https://github.com/your-username/google-trends-dashboard#readme",
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^2.0.0",
+    "live-server": "^1.2.2",
+    "serve": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}

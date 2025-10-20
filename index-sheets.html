@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Trends 多圖表展示儀表板 - Google Sheets 版</title>
+    <meta name="description" content="整合多個 Google Trends 圖表的展示儀表板，支援 Google Sheets 雲端儲存">
+    <meta name="keywords" content="Google Trends, 趨勢分析, 關鍵字趨勢, 數據視覺化">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        /* Google Sheets 特有樣式 */
+        .storage-mode-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .storage-mode-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            background: var(--gray-50);
+            color: var(--color-text);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .storage-mode-btn:hover {
+            background: var(--gray-100);
+        }
+
+        .storage-mode-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.success {
+            background: var(--success-color);
+        }
+
+        .status-indicator.warning {
+            background: var(--color-warning);
+        }
+
+        .status-indicator.error {
+            background: var(--danger-color);
+        }
+
+        .storage-status {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--gray-50);
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 左側面板 -->
+        <div class="leftside">
+            <header>
+                <h1>📊 Google Trends Dashboard</h1>
+                <p class="subtitle">多圖表展示儀表板 - Google Sheets 版</p>
+            </header>
+
+            <!-- RSS 熱門搜尋 -->
+            <section class="trending-section" aria-label="熱門搜尋">
+                <h2>🔥 即時熱門搜尋</h2>
+                <div id="rss-container" class="rss-container">
+                    <div class="rss-loading">載入中...</div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 右側主要內容 -->
+        <div class="rightside">
+            <!-- 新增圖表區塊 -->
+            <section class="section-header">
+                <h2>新增 Google Trends 圖表</h2>
+                <button id="config-btn" class="btn-secondary" title="圖表管理" aria-label="開啟圖表管理面板">
+                    📁 管理
+                </button>
+            </section>
+
+            <div class="form-container">
+                <form id="add-chart-form" class="chart-form">
+                    <div class="form-row">
+                        <select name="geo" id="geo-select" aria-label="選擇地區">
+                            <option value="">🌍 全球</option>
+                            <option value="TW" selected>🇹🇼 台灣</option>
+                            <option value="US">🇺🇸 美國</option>
+                            <option value="JP">🇯🇵 日本</option>
+                            <option value="KR">🇰🇷 南韓</option>
+                            <option value="CN">🇨🇳 中國</option>
+                            <option value="HK">🇭🇰 香港</option>
+                        </select>
+                        <select name="time" id="time-select" aria-label="選擇時間範圍">
+                            <option value="now 7-d">📅 過去7天</option>
+                            <option value="today 1-m">📅 過去30天</option>
+                            <option value="today 3-m">📅 過去3個月</option>
+                            <option value="today 12-m" selected>📅 過去12個月</option>
+                            <option value="today 5-y">📅 過去5年</option>
+                            <option value="all">📅 所有時間</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="keyword" id="keyword-input" placeholder="輸入關鍵字（例如：黃金價格）" required
+                            maxlength="100" aria-label="關鍵字" />
+                        <input type="text" name="title" id="title-input" placeholder="自訂圖表標題（選填）" maxlength="50"
+                            aria-label="圖表標題" />
+                        <button type="submit" class="btn">新增圖表</button>
+                    </div>
+                </form>
+
+                <!-- 儲存說明 -->
+                <div class="storage-notice">
+                    <small>💡 <strong>提示：</strong>支援 Google Sheets 雲端儲存，資料可跨裝置同步。</small>
+                </div>
+
+                <!-- 圖表設定面板 -->
+                <div id="config-panel" class="config-panel">
+                    <div class="config-header">
+                        <h3>📁 圖表管理</h3>
+                        <button id="close-config" class="btn-icon" title="關閉" aria-label="關閉設定面板">×</button>
+                    </div>
+
+                    <div class="config-content">
+                        <!-- 儲存狀態 -->
+                        <div class="config-section">
+                            <h4>儲存狀態</h4>
+                            <div id="storage-status" class="storage-status">
+                                <span class="status-indicator warning"></span>
+                                本地儲存模式
+                            </div>
+                        </div>
+
+                        <!-- 儲存模式選擇 -->
+                        <div class="config-section">
+                            <h4>儲存模式</h4>
+                            <div class="storage-mode-selector">
+                                <button id="setup-sheets" class="storage-mode-btn">
+                                    ☁️ 設定 Google Sheets
+                                </button>
+                                <button id="switch-local" class="storage-mode-btn">
+                                    💾 本地儲存
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 檔案資訊 -->
+                        <div class="config-section">
+                            <h4>檔案資訊</h4>
+                            <div class="file-info">
+                                <div class="file-info-item">
+                                    <span class="label">儲存位置:</span>
+                                    <span id="current-file">瀏覽器本地儲存</span>
+                                </div>
+                                <div class="file-info-item">
+                                    <span class="label">圖表數量:</span>
+                                    <span id="chart-count">0 個圖表</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 檔案操作 -->
+                        <div class="config-section">
+                            <h4>檔案操作</h4>
+                            <div class="file-operations">
+                                <button id="export-csv" class="btn-secondary">
+                                    📤 匯出 CSV
+                                </button>
+                                <button id="upload-csv" class="btn-secondary">
+                                    📥 匯入 CSV
+                                </button>
+                                <input type="file" id="import-csv" accept=".csv" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 圖表展示區 -->
+            <section class="charts-section">
+                <div id="trends-grid" class="trends-grid">
+                    <!-- 圖表會動態載入到這裡 -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 載入 Google Sheets 整合版 JavaScript -->
+    <script src="assets/js/dashboard-sheets.js"></script>
+</body>
+
+</html>
