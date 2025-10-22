@@ -70,8 +70,20 @@ function addNewChart() {
         // 顯示成功訊息
         showAlert(`成功新增圖表：${chartTitle}`, 'success');
         
-    // 記錄到本地存儲
-    saveChartToStorage(chartId, keyword, title, geo, time);
+    // 記錄到 Google Sheets
+    if (window.addChartToSheets) {
+        window.addChartToSheets({
+            chartId,
+            keyword,
+            title: chartTitle,
+            geo,
+            time,
+            created: new Date().toISOString()
+        }).catch(err => {
+            console.warn('Google Sheets API 新增失敗:', err);
+            showAlert('雲端儲存失敗', 'warning');
+        });
+    }
     
     // 自動備份提醒（每5個圖表提醒一次）
     const chartCount = document.querySelectorAll('.trends-widget').length;
@@ -105,7 +117,12 @@ function removeChart(chartId) {
         
         setTimeout(() => {
             chart.remove();
-            removeChartFromStorage(chartId);
+            if (window.deleteChartFromSheets) {
+                window.deleteChartFromSheets(chartId).catch(err => {
+                    console.warn('Google Sheets API 刪除失敗:', err);
+                    showAlert('雲端刪除失敗', 'warning');
+                });
+            }
             showAlert(`已移除圖表：${chartTitle}`, 'info');
         }, 300);
     }
@@ -115,28 +132,27 @@ function removeChart(chartId) {
  * 匯出所有圖表設定
  */
 function exportChartsConfig() {
-    const charts = [];
-    const chartElements = document.querySelectorAll('.trends-widget');
-    
-    chartElements.forEach(chart => {
-        const title = chart.querySelector('h3').textContent;
-        const iframe = chart.querySelector('iframe');
-        const src = iframe.src;
-        
-        charts.push({
-            id: chart.id,
-            title: title,
-            url: src
+    // 直接從 Google Sheets API 取得最新資料
+    if (window.fetchCharts) {
+        window.fetchCharts().then(charts => {
+            const config = {
+                exportDate: new Date().toISOString(),
+                version: '1.0',
+                charts: charts.map(chart => ({
+                    id: chart.chartId || chart.id,
+                    title: chart.title || chart.keyword,
+                    keyword: chart.keyword,
+                    geo: chart.geo,
+                    time: chart.time,
+                    url: chart.url || buildTrendsUrl(chart.keyword, chart.geo, chart.time)
+                }))
+            };
+            downloadJSON(config, `google-trends-config-${getDateString()}.json`);
+            showAlert('已匯出雲端設定', 'success');
+        }).catch(err => {
+            showAlert('雲端匯出失敗，請稍後再試', 'error');
         });
-    });
-    
-    const config = {
-        exportDate: new Date().toISOString(),
-        version: '1.0',
-        charts: charts
-    };
-    
-    downloadJSON(config, `google-trends-config-${getDateString()}.json`);
+    }
 }
 
 /**
@@ -145,34 +161,40 @@ function exportChartsConfig() {
  */
 function importChartsConfig(file) {
     const reader = new FileReader();
-    
     reader.onload = function(e) {
         try {
             const config = JSON.parse(e.target.result);
-            
             if (!config.charts || !Array.isArray(config.charts)) {
                 throw new Error('設定檔格式不正確');
             }
-            
-            // 清空現有圖表（保留預設圖表）
-            const grid = document.getElementById('trends-grid');
-            const customCharts = grid.querySelectorAll('.trends-widget:not([data-default])');
-            customCharts.forEach(chart => chart.remove());
-            
-            // 匯入新圖表
-            config.charts.forEach(chartConfig => {
-                const chartElement = createChartElementFromConfig(chartConfig);
-                grid.appendChild(chartElement);
-            });
-            
-            showAlert(`成功匯入 ${config.charts.length} 個圖表`, 'success');
-            
+            // 呼叫 Google Sheets API 匯入
+            if (window.importChartsToSheets) {
+                window.importChartsToSheets(config.charts).then(res => {
+                    // 匯入成功後同步前端顯示
+                    window.fetchCharts().then(charts => {
+                        const grid = document.getElementById('trends-grid');
+                        grid.innerHTML = '';
+                        chartCounter = 0;
+                        charts.forEach(chart => {
+                            const iframeUrl = buildTrendsUrl(chart.keyword, chart.geo, chart.time);
+                            const chartElement = createChartElement(
+                                chart.chartId || chart.id,
+                                chart.title || chart.keyword,
+                                iframeUrl
+                            );
+                            grid.appendChild(chartElement);
+                            chartCounter++;
+                        });
+                        showAlert('匯入設定成功', 'success');
+                    });
+                }).catch(err => {
+                    showAlert('雲端匯入失敗：' + err.message, 'error');
+                });
+            }
         } catch (error) {
-            console.error('匯入設定失敗:', error);
-            showAlert('匯入失敗，請檢查檔案格式', 'error');
+            showAlert('匯入失敗：' + error.message, 'error');
         }
     };
-    
     reader.readAsText(file);
 }
 
@@ -622,19 +644,37 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初始化事件監聽器
     initializeEventListeners();
-    
     // 初始化表單驗證
     validateInputs();
-    
     // 添加 CSS 動畫
     addCSSAnimations();
-    
     // 啟動 RSS 更新器
     startRSSUpdater();
-    
-    // 載入預設的 trends.csv 檔案
-    loadDefaultConfig();
-    
+    // 載入 Google Sheets 雲端圖表
+    if (window.fetchCharts) {
+        window.fetchCharts().then(charts => {
+            const grid = document.getElementById('trends-grid');
+            grid.innerHTML = '';
+            chartCounter = 0;
+            charts.forEach(chart => {
+                const iframeUrl = buildTrendsUrl(chart.keyword, chart.geo, chart.time);
+                const chartElement = createChartElement(
+                    chart.chartId || chart.id,
+                    chart.title || chart.keyword,
+                    iframeUrl
+                );
+                grid.appendChild(chartElement);
+                chartCounter++;
+            });
+            showAlert('已載入雲端圖表', 'info');
+        }).catch(err => {
+            console.warn('Google Sheets API 載入失敗:', err);
+            showAlert('雲端載入失敗，使用本地預設', 'warning');
+            loadDefaultConfig();
+        });
+    } else {
+        loadDefaultConfig();
+    }
     console.log('✅ 初始化完成，包含 RSS 熱門搜尋');
 });
 
