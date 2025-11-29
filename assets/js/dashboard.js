@@ -41,6 +41,7 @@ function addNewChart() {
     const title = document.getElementById('title-input').value.trim();
     const geo = document.getElementById('geo-select').value;
     const time = document.getElementById('time-select').value;
+    const property = document.getElementById('property-select') ? document.getElementById('property-select').value : '';
 
     // 驗證必填欄位
     if (!keyword) {
@@ -48,6 +49,81 @@ function addNewChart() {
         document.getElementById('keyword-input').focus();
         return;
     }
+
+    // 處理多個關鍵字
+    const keywords = keyword.split(',').map(k => k.trim()).filter(k => k);
+    
+    keywords.forEach((k, index) => {
+        // 生成唯一ID
+        const chartId = `chart-${Date.now()}-${index}`;
+        const chartTitle = title || k;
+        
+        // 建立 URL
+        const iframeUrl = buildTrendsUrl(k, geo, time, property);
+        
+        // 建立並添加圖表元素
+        const chartElement = createChartElement(chartId, chartTitle, iframeUrl);
+        document.getElementById('trends-grid').appendChild(chartElement);
+        
+        // 儲存到本地
+        saveChartToStorage(chartId, k, chartTitle, geo, time);
+    });
+
+    clearInputFields();
+}
+
+/**
+ * 移除圖表
+ */
+function removeChart(chartId) {
+    const chart = document.getElementById(chartId);
+    if (chart) {
+        chart.remove();
+        removeChartFromStorage(chartId);
+    }
+}
+
+/**
+ * 構建 Google Trends Embed URL
+ */
+function buildTrendsUrl(keyword, geo, time, property = '') {
+    const req = {
+        comparisonItem: [{
+            keyword: keyword,
+            geo: geo,
+            time: time
+        }],
+        category: 0,
+        property: property
+    };
+    
+    const query = encodeURIComponent(keyword);
+    const date = encodeURIComponent(time);
+    
+    return `https://trends.google.com/trends/embed/explore/TIMESERIES?req=${JSON.stringify(req)}&tz=-480&eq=q%3D${query}%26date%3D${date}%26geo%3D${geo}`;
+}
+
+/**
+ * 建立圖表 DOM 元素
+ */
+function createChartElement(id, title, iframeUrl, emoji = '📊') {
+    const article = document.createElement('article');
+    article.className = 'trends-widget';
+    article.id = id;
+    
+    article.innerHTML = `
+        <button class="btn-remove" onclick="removeChart('${id}')" title="移除此圖表">✕</button>
+        <h3>${emoji} ${escapeHtml(title)}</h3>
+        <iframe class="chart-iframe"
+            src="${iframeUrl}"
+            loading="lazy"
+            style="border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.24) 0px 2px 2px 0px;">
+        </iframe>
+    `;
+    
+    return article;
+}
+
 function clearInputFields() {
     document.getElementById('keyword-input').value = '';
     document.getElementById('title-input').value = '';
@@ -216,6 +292,11 @@ function validateInputs() {
 function debounce(func, delay) {
     let timeoutId;
     return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
 /**
  * 切換設定面板顯示/隱藏
  */
@@ -278,18 +359,6 @@ function exportCurrentConfig() {
     URL.revokeObjectURL(url);
     
     showAlert('CSV 設定檔案匯出成功！', 'success');
-}
-
-/**
- * 重置為預設設定
- */
-/**
- * 顯示備份提醒
- */
-function showBackupReminder() {
-    if (confirm('💾 建議定期備份您的圖表設定！\n\n是否現在匯出 CSV 備份檔？')) {
-        exportCurrentConfig();
-    }
 }
 
 /**
@@ -514,15 +583,47 @@ function extractTimeFromUrl(url) {
     }
 }
 
+/**
+ * 載入熱門搜尋 (RSS)
+ */
+function loadTrendingSearches() {
+    const rssContainer = document.getElementById('rss-container');
+    if (!rssContainer) return;
 
+    // 由於跨域問題 (CORS)，前端直接 fetch Google RSS 會失敗
+    // 這裡使用一個模擬的數據展示，或者使用 CORS Proxy (如 cors-anywhere)
+    // 為了演示，我們顯示一個靜態的熱門關鍵字列表，或者提示使用者
+    
+    rssContainer.innerHTML = `
+        <ul class="rss-list">
+            <li><a href="https://trends.google.com.tw/trends/trendingsearches/daily?geo=TW" target="_blank">👉 點擊查看 Google Trends 每日熱門搜尋</a></li>
+            <li><small>由於瀏覽器安全限制，無法直接在此顯示即時 RSS 內容。</small></li>
+        </ul>
+    `;
+}
+
+/**
+ * 開啟 Google Trends 連結
+ */
+function openTrendsLink(keyword) {
+    const url = `https://trends.google.com.tw/trends/explore?q=${encodeURIComponent(keyword)}&geo=TW`;
+    window.open(url, '_blank');
+}
 
 // 全域暴露必要函數
 window.addNewChart = addNewChart;
 window.removeChart = removeChart;
 window.exportChartsConfig = exportChartsConfig;
-window.importChartsConfig = importChartsConfig;
+// window.importChartsConfig = importChartsConfig; // 尚未實作
 window.loadTrendingSearches = loadTrendingSearches;
 window.openTrendsLink = openTrendsLink;
 window.toggleConfigPanel = toggleConfigPanel;
 window.loadConfigFile = loadConfigFile;
 window.exportCurrentConfig = exportCurrentConfig;
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    initializeEventListeners();
+    loadDefaultConfig();
+    loadTrendingSearches();
+});

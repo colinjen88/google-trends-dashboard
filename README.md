@@ -4,33 +4,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
-[![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-
-## ✨ 功能特色
-
-### 🎯 核心功能
-- **無限圖表新增**：動態新增任意數量的 Google Trends 圖表
-- **CSV 設定檔管理**：匯入/匯出圖表設定，便於管理和分享
-- **☁️ Google Sheets 整合**：支援雲端儲存，資料跨裝置同步（新功能）
-- **🔄 雙儲存模式**：可選擇本地儲存或 Google Sheets 雲端儲存
-- **即時熱門搜尋**：顯示台灣即時熱門搜尋趨勢（水平並排顯示）
-- **自訂關鍵字**：支援任何關鍵字的趨勢分析
-- **多地區支援**：台灣、中國、美國、日本、韓國、全球
-- **時間範圍選擇**：1個月到5年，甚至所有時間
-- **即時移除**：一鍵移除不需要的圖表
-
-### 🎨 設計特色
-- **專業設計系統**：統一的配色、字體、間距規範
-- **滿版寬度**：充分利用螢幕空間
-- **響應式設計**：自動適應不同裝置
-- **現代化UI**：簡潔美觀的使用者介面
-- **流暢動畫**：使用現代 CSS 動畫技術
-- **無障礙支援**：完整的 ARIA 標籤和鍵盤導航
-
-### 📱 響應式佈局
-| 螢幕尺寸 | 每排圖表數 | 適用裝置 |
-|---------|-----------|----------|
 | > 1600px | 4個 | 超大螢幕 |
 | 1200-1600px | 3個 | 大螢幕 |
 | 800-1200px | 2個 | 平板 |
@@ -80,64 +53,6 @@ google-trends-dashboard/
 │   └── 📄 advanced.html       # 進階功能範例
 ├── 📄 README.md               # 專案說明
 ├── 📄 LICENSE                 # 授權條款
-└── 📄 .gitignore              # Git 忽略檔案
-```
-
-## 🎮 使用方法
-
-### 基本操作
-1. **新增圖表**
-   - 在「關鍵字」欄位輸入要分析的詞彙
-   - 選擇地區和時間範圍
-   - 點擊「新增圖表」按鈕或按 Enter 鍵
-
-2. **自訂標題**
-   - 在「圖表標題」欄位輸入自訂名稱
-   - 如果留空，將使用關鍵字作為標題
-
-3. **移除圖表**
-   - 點擊圖表右上角的「✕」按鈕
-   - 確認後即可移除
-
-### CSV 設定檔管理
-1. **匯出設定**
-   - 點擊左側面板右上角的 📁 檔案按鈕
-   - 選擇「下載 CSV 設定檔」
-   - 預設檔名為 `trends.csv`
-
-2. **載入設定**
-   - 點擊「選擇 CSV 設定檔」按鈕
-   - 選擇符合格式的 CSV 檔案
-   - 系統會自動載入並顯示圖表
-
-### CSV 檔案格式
-```csv
-title,keyword,geo,time,emoji
-比特幣 - 搜尋趨勢,比特幣,TW,today 1-m,₿
-股票市場 - 搜尋趨勢,股票,TW,today 3-m,📈
-房地產 - 搜尋趨勢,房價,TW,today 12-m,🏠
-```
-
-### 支援的參數
-**地區代碼：**
-- `TW`：台灣 🇹🇼
-- `CN`：中國 🇨🇳  
-- `US`：美國 🇺🇸
-- `JP`：日本 🇯🇵
-- `KR`：韓國 🇰🇷
-- `""`：全球 🌍
-
-**時間範圍：**
-- `today 1-m`：過去1個月
-- `today 3-m`：過去3個月
-- `today 12-m`：過去12個月
-- `today 5-y`：過去5年
-- `all`：所有時間
-
-### 熱門搜尋功能
-- 右側自動顯示台灣即時熱門搜尋
-- 每5分鐘自動更新
-- 項目以水平並排方式顯示
 - 點擊項目可快速新增為圖表
 
 ### ☁️ Google Sheets 整合（新功能）
@@ -313,22 +228,6 @@ npm install
 npm run dev
 
 # 建置專案
-npm run build
-```
-
-## 📝 更新記錄
-
-### v1.0.0 (2025-10-20)
-- ✨ 初始版本發布
-- 🎯 支援無限新增圖表
-- 📱 響應式設計
-- 🎨 現代化UI設計
-- 📊 滿版寬度展示
-
-查看完整更新記錄：[CHANGELOG.md](docs/CHANGELOG.md)
-
-## 📄 授權條款
-
 此專案採用 MIT 授權條款 - 詳見 [LICENSE](LICENSE) 檔案
 
 ## 🙏 致謝

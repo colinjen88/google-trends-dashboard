@@ -39,67 +39,45 @@
                         <select id="geo-select" aria-label="選擇地區">
                             <option value="TW">🇹🇼 台灣</option>
                             <option value="CN">🇨🇳 中國</option>
-                            <option value="US">🇺🇸 美國</option>
-                            <option value="JP">🇯🇵 日本</option>
-                            <option value="KR">🇰🇷 韓國</option>
-                            <option value="">🌍 全球</option>
-                        </select>
 
-                        <select id="time-select" aria-label="選擇時間範圍">
-                            <option value="today 1-m">📅 過去1個月</option>
-                            <option value="today 3-m">📅 過去3個月</option>
-                            <option value="today 12-m">📅 過去12個月</option>
-                            <option value="today 5-y">📅 過去5年</option>
-                            <option value="all">📅 所有時間</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <input type="text" id="keyword-input" placeholder="輸入關鍵字（例如：黃金價格）" required maxlength="100"
-                            aria-label="關鍵字" />
-                        <input type="text" id="title-input" placeholder="自訂圖表標題（選填）" maxlength="50" aria-label="圖表標題" />
-                        <button type="submit" class="btn">新增圖表</button>
-                    </div>
-
-                </form>
-
-                <!-- 儲存說明 -->
-                <div class="storage-notice">
-                    <small>⚠️ <strong>重要：</strong>新增的圖表僅儲存在您的瀏覽器本地，建議定期匯出 CSV 備份。</small>
-                </div>
-
-                <!-- 圖表設定面板 -->
-                <div class="config-panel" id="config-panel" style="display: none;">
-                    <div class="config-header">
-                        <h4>📋 圖表設定檔案管理</h4>
-                        <button type="button" class="btn-close" onclick="toggleConfigPanel()">✕</button>
-                    </div>
-                    <div class="config-content">
-                        <div class="config-section">
-                            <label>📄 當前設定檔：</label>
-                            <div class="current-file-info" id="current-file-info">
-                                trends.csv
+                            <!-- 儲存說明 -->
+                            <div class="storage-notice">
+                                <small>⚠️ <strong>重要：</strong>新增的圖表僅儲存在您的瀏覽器本地，建議定期匯出 CSV 備份。</small>
                             </div>
-                        </div>
-                        <div class="config-section">
-                            <label>📂 載入設定檔：</label>
-                            <div class="file-upload-wrapper">
-                                <input type="file" id="config-file-input" accept=".csv" onchange="loadConfigFile(event)"
-                                    style="display: none;">
-                                <button type="button" class="btn btn-secondary"
-                                    onclick="document.getElementById('config-file-input').click()">
-                                    選擇 CSV 設定檔
-                                </button>
+
+                            <!-- 圖表設定面板 -->
+                            <div class="config-panel" id="config-panel" style="display: none;">
+                                <div class="config-header">
+                                    <h4>📋 圖表設定檔案管理</h4>
+                                    <button type="button" class="btn-close" onclick="toggleConfigPanel()">✕</button>
+                                </div>
+                                <div class="config-content">
+                                    <div class="config-section">
+                                        <label>📄 當前設定檔：</label>
+                                        <div class="current-file-info" id="current-file-info">
+                                            trends.csv
+                                        </div>
+                                    </div>
+                                    <div class="config-section">
+                                        <label>📂 載入設定檔：</label>
+                                        <div class="file-upload-wrapper">
+                                            <input type="file" id="config-file-input" accept=".csv"
+                                                onchange="loadConfigFile(event)" style="display: none;">
+                                            <button type="button" class="btn btn-secondary"
+                                                onclick="document.getElementById('config-file-input').click()">
+                                                選擇 CSV 設定檔
+                                            </button>
+                                        </div>
+                                        <small>支援 .csv 格式（欄位：標題,關鍵字,地區,時間範圍,表情符號）</small>
+                                    </div>
+                                    <div class="config-section">
+                                        <label>💾 匯出當前設定：</label>
+                                        <button type="button" class="btn btn-secondary" onclick="exportCurrentConfig()">
+                                            下載 CSV 設定檔
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <small>支援 .csv 格式（欄位：標題,關鍵字,地區,時間範圍,表情符號）</small>
-                        </div>
-                        <div class="config-section">
-                            <label>💾 匯出當前設定：</label>
-                            <button type="button" class="btn btn-secondary" onclick="exportCurrentConfig()">
-                                下載 CSV 設定檔
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </section>
         </div>
         <!-- 右側：RSS 熱門搜尋 -->
