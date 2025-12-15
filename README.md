@@ -4,6 +4,24 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
+## ✨ 功能特色
+
+### 🎯 核心功能
+- **無限圖表新增**：動態新增任意數量的 Google Trends 圖表
+- **CSV 設定檔管理**：匯入/匯出圖表設定，支援外部檔案管理
+- **即時熱門搜尋**：顯示台灣即時熱門搜尋趨勢，水平並排顯示
+- **響應式設計**：支援桌面、平板、手機裝置
+- **多地區支援**：台灣、中國、美國、日本、韓國、全球
+- **時間範圍選擇**：1個月到5年，甚至所有時間
+- **自訂標題**：可自訂圖表顯示名稱和表情符號
+
+### 📱 響應式佈局
+
+| 螢幕尺寸 | 每排圖表數 | 設備類型 |
+|---------|----------|--------|
 | > 1600px | 4個 | 超大螢幕 |
 | 1200-1600px | 3個 | 大螢幕 |
 | 800-1200px | 2個 | 平板 |
@@ -25,13 +43,17 @@ git clone https://github.com/your-username/google-trends-dashboard.git
 # 進入專案目錄
 cd google-trends-dashboard
 
-# 啟動本地伺服器（推薦）
+# 安裝依賴
+npm install
+
+# 啟動開發伺服器（推薦，支援熱重載）
+npm run dev
+
+# 或使用 Python
 python -m http.server 8000
-# 或使用 Node.js
-npx serve .
 
 # 在瀏覽器開啟
-http://localhost:8000
+http://localhost:8080
 ```
 
 ## 📁 專案結構
@@ -39,23 +61,29 @@ http://localhost:8000
 ```
 google-trends-dashboard/
 ├── 📄 index.html              # 主要頁面
+├── 📄 index-sheets.html       # Google Sheets 整合版
+├── 📄 README.md               # 專案說明
+├── 📄 LICENSE                 # MIT 授權條款
+├── 📄 package.json            # NPM 設定檔
 ├── 📁 assets/                 # 靜態資源
 │   ├── 📁 css/
 │   │   └── 📄 styles.css      # 主要樣式表
 │   └── 📁 js/
-│       └── 📄 dashboard.js    # 主要功能腳本
+│       ├── 📄 dashboard.js    # 主要功能腳本
+│       ├── 📄 dashboard-sheets.js  # Google Sheets 版腳本
+│       └── 📄 sheets-api.js   # Sheets API 整合
+├── 📁 config/                 # 設定檔案
+│   └── 📄 trends.csv          # 預設圖表設定
 ├── 📁 docs/                   # 文件資料夾
-│   ├── 📄 README.md           # 詳細說明文件
 │   ├── 📄 API.md              # API 文件
-│   └── 📄 CHANGELOG.md        # 版本更新記錄
-├── 📁 examples/               # 範例檔案
-│   ├── 📄 simple.html         # 簡化版範例
-│   └── 📄 advanced.html       # 進階功能範例
-├── 📄 README.md               # 專案說明
-├── 📄 LICENSE                 # 授權條款
-- 點擊項目可快速新增為圖表
+│   ├── 📄 CHANGELOG.md        # 版本更新記錄
+│   ├── 📄 PROJECT_OVERVIEW.md # 專案概述
+│   └── 📄 GOOGLE_SHEETS_INTEGRATION.md  # Google Sheets 整合說明
+└── 📁 examples/               # 範例檔案
+    └── 📄 simple.html         # 簡化版範例
+```
 
-### ☁️ Google Sheets 整合（新功能）
+## ☁️ Google Sheets 整合
 
 **兩種使用方式：**
 
@@ -90,7 +118,7 @@ google-trends-dashboard/
 - ✅ Edge 80+
 
 ### 效能最佳化
-- **延遲載入**：iframe 使用 `loading=\"lazy\"`
+- **延遲載入**：iframe 使用 `loading="lazy"`
 - **CSS 最佳化**：使用 CSS Grid 和 Flexbox
 - **JavaScript 最佳化**：事件委派、防抖處理
 
@@ -228,6 +256,11 @@ npm install
 npm run dev
 
 # 建置專案
+npm run build
+```
+
+## 📜 授權條款
+
 此專案採用 MIT 授權條款 - 詳見 [LICENSE](LICENSE) 檔案
 
 ## 🙏 致謝
