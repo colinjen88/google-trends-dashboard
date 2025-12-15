@@ -528,17 +528,27 @@ main {
 /* ==================================================
    表單控制項
    ================================================== */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
 .input-group {
     display: flex;
-    gap: var(--spacing-3);
-    margin: var(--spacing-3) 0;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.input-group label {
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: var(--font-size-sm);
 }
 
 .input-group input,
 .input-group select {
-    flex: 1;
-    min-width: 200px;
+    width: 100%;
     padding: var(--spacing-3) var(--spacing-4);
     border: 1px solid var(--gray-300);
     border-radius: var(--radius-lg);
@@ -567,33 +577,59 @@ main {
     -moz-appearance: none;
 }
 
+/* 並排輸入組 */
+.input-row {
+    display: flex;
+    gap: var(--spacing-4);
+}
+
+.input-row .input-group {
+    flex: 1;
+}
+
+@media (max-width: 600px) {
+    .input-row {
+        flex-direction: column;
+    }
+}
+
 /* ==================================================
    按鈕樣式
    ================================================== */
 .btn {
     padding: var(--spacing-3) var(--spacing-5);
-    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-hover) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
     color: white;
     border: none;
     border-radius: var(--radius-lg);
     cursor: pointer;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
     font-weight: 600;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     min-width: 120px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
     font-family: var(--font-family);
+    margin-top: var(--spacing-3);
+    width: 100%;
 }
 
 .btn:hover {
-    background: linear-gradient(135deg, var(--success-hover) 0%, #065f46 100%);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, var(--primary-hover) 0%, #1e40af 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .btn:active {
     transform: translateY(0);
     box-shadow: var(--shadow-sm);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-hover) 100%);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--success-hover) 0%, #065f46 100%);
 }
 
 .btn-remove {
