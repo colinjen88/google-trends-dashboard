@@ -238,7 +238,76 @@ body {
     text-align: center;
     color: #6c757d;
     font-style: italic;
-    padding: 40px 0;
+    padding: 20px 0;
+}
+
+/* 熱門搜尋標籤樣式 */
+.trending-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) 0;
+}
+
+.trending-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    background: linear-gradient(135deg, #fff 0%, var(--gray-50) 100%);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: var(--font-size-sm);
+}
+
+.trending-tag:hover {
+    background: linear-gradient(135deg, var(--primary-light) 0%, #bfdbfe 100%);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.trending-tag .tag-title {
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.trending-tag:hover .tag-title {
+    color: var(--primary-color);
+}
+
+.trending-tag .tag-traffic {
+    font-size: 11px;
+    color: var(--gray-500);
+    background: var(--gray-100);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+}
+
+.trending-footer {
+    margin-top: var(--spacing-3);
+    padding-top: var(--spacing-3);
+    border-top: 1px solid var(--gray-200);
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--gray-500);
+}
+
+.trending-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.trending-footer a:hover {
+    text-decoration: underline;
+}
+
+/* 備用內容樣式 */
+.trending-tags.fallback .trending-tag {
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
 }
 
 .rss-footer {

@@ -586,21 +586,144 @@ function extractTimeFromUrl(url) {
 /**
  * 載入熱門搜尋 (RSS)
  */
-function loadTrendingSearches() {
+async function loadTrendingSearches() {
     const rssContainer = document.getElementById('rss-container');
     if (!rssContainer) return;
 
-    // 由於跨域問題 (CORS)，前端直接 fetch Google RSS 會失敗
-    // 這裡使用一個模擬的數據展示，或者使用 CORS Proxy (如 cors-anywhere)
-    // 為了演示，我們顯示一個靜態的熱門關鍵字列表，或者提示使用者
+    // Google Trends RSS 來源
+    const rssUrl = 'https://trends.google.com.tw/trending/rss?geo=TW';
     
-    rssContainer.innerHTML = `
-        <ul class="rss-list">
-            <li><a href="https://trends.google.com.tw/trends/trendingsearches/daily?geo=TW" target="_blank">👉 點擊查看 Google Trends 每日熱門搜尋</a></li>
-            <li><small>由於瀏覽器安全限制，無法直接在此顯示即時 RSS 內容。</small></li>
-        </ul>
-    `;
+    // 多個 CORS 代理服務（按優先順序嘗試）
+    const corsProxies = [
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
+        `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`,
+        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(rssUrl)}`
+    ];
+
+    rssContainer.innerHTML = '<p class="loading-message">🔄 正在載入熱門搜尋...</p>';
+
+    for (const proxyUrl of corsProxies) {
+        try {
+            const response = await fetch(proxyUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/rss+xml, application/xml, text/xml'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const xmlText = await response.text();
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+            
+            // 檢查是否成功解析 XML
+            const items = xmlDoc.querySelectorAll('item');
+            if (items.length === 0) {
+                throw new Error('No items found');
+            }
+
+            // 成功獲取資料，顯示熱門搜尋
+            displayTrendingItems(items, rssContainer);
+            console.log('✅ 熱門搜尋載入成功');
+            return; // 成功後退出
+        } catch (error) {
+            console.warn(`CORS 代理失敗: ${proxyUrl}`, error.message);
+            continue; // 嘗試下一個代理
+        }
+    }
+
+    // 所有代理都失敗時，顯示備用內容
+    displayFallbackContent(rssContainer);
 }
+
+/**
+ * 顯示熱門搜尋項目
+ */
+function displayTrendingItems(items, container) {
+    let html = '<div class="trending-tags">';
+    
+    items.forEach((item, index) => {
+        if (index >= 20) return; // 最多顯示 20 個項目
+        
+        const title = item.querySelector('title')?.textContent || '';
+        const traffic = item.querySelector('ht\\:approx_traffic, approx_traffic')?.textContent || '';
+        const newsUrl = item.querySelector('ht\\:news_item_url, news_item_url')?.textContent || '';
+        
+        if (title) {
+            html += `
+                <div class="trending-tag" onclick="addTrendingKeyword('${escapeHtml(title)}')" title="點擊新增「${escapeHtml(title)}」圖表">
+                    <span class="tag-title">🔥 ${escapeHtml(title)}</span>
+                    ${traffic ? `<span class="tag-traffic">${traffic}</span>` : ''}
+                </div>
+            `;
+        }
+    });
+    
+    html += '</div>';
+    html += `
+        <div class="trending-footer">
+            <small>💡 點擊關鍵字可快速新增圖表 | 資料來源：Google Trends</small>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+/**
+ * 顯示備用內容（當 RSS 載入失敗時）
+ */
+function displayFallbackContent(container) {
+    // 顯示一些常見的熱門關鍵字作為備用
+    const fallbackKeywords = [
+        '台股', 'AI', '比特幣', '房價', '匯率', 
+        '黃金', 'iPhone', 'Netflix', '旅遊', '美食'
+    ];
+    
+    let html = '<div class="trending-tags fallback">';
+    
+    fallbackKeywords.forEach(keyword => {
+        html += `
+            <div class="trending-tag" onclick="addTrendingKeyword('${keyword}')" title="點擊新增「${keyword}」圖表">
+                <span class="tag-title">📊 ${keyword}</span>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    html += `
+        <div class="trending-footer">
+            <p><a href="https://trends.google.com.tw/trends/trendingsearches/daily?geo=TW" target="_blank">
+                👉 查看 Google Trends 即時熱門搜尋
+            </a></p>
+            <small>💡 上方為熱門推薦關鍵字，點擊可快速新增圖表</small>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+/**
+ * 從熱門搜尋新增關鍵字圖表
+ */
+function addTrendingKeyword(keyword) {
+    // 設定關鍵字到輸入框
+    const keywordInput = document.getElementById('keyword-input');
+    if (keywordInput) {
+        keywordInput.value = keyword;
+    }
+    
+    // 直接新增圖表
+    addNewChart();
+    
+    // 顯示提示
+    showAlert(`已新增「${keyword}」趨勢圖表`, 'success');
+}
+
+// 暴露新函數到全域
+window.addTrendingKeyword = addTrendingKeyword;
 
 /**
  * 開啟 Google Trends 連結
