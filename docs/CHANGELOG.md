@@ -5,6 +5,89 @@
 格式基於 [Keep a Changelog](https://keepachangelog.com/zh-TW/1.0.0/)，
 並且此專案遵循 [語義化版本](https://semver.org/lang/zh-TW/)。
 
+## [2.1.0] - 2025-12-17
+
+### 🔥 核心功能增強
+- **📊 真實關鍵字排名** - 整合服务端 Puppeteer 爬蟲，獲取精準的 Google 搜尋排名（非模擬數據）
+- **🆓 雙模式檢測** - 本地開發自動使用「手動檢測模式」，VPS 部署自動啟用「自動爬取模式」
+- **🛡️ 智能防封鎖** - 實作隨機延遲 (Random Delay) 與 User-Agent 輪替機制
+- **⚡ GSC 架構準備** - 加入 `RankProviders` 介面，預留 Google Search Console API 擴充能力
+
+### 🔧 系統優化
+- **📉 智能降級機制** - 解決 Google Trends Embed 429 (Too Many Requests) 問題，自動切換為直接連結卡片
+- **📱 嵌入方式優化** - 改用 iframe 直接嵌入 explore 頁面，提高載入成功率
+- **🎨 UI 改進** - 優化圖表佔位符 (Placeholder) 設計，提供更明確的操作引導
+
+### 📦 依賴變更
+- 新增 `puppeteer` (Optional Dependency) - 用於 VPS 環境的爬蟲功能
+
+---
+
+## [2.0.0] - 2025-12-16
+
+### 🎨 全新設計系統
+- ✨ **玻璃擬態 (Glassmorphism)** - 採用 2025 年主流設計語言
+- 🌙 **深色模式優先** - 預設深色主題，支援一鍵切換
+- 🎭 **流暢動畫** - fadeIn、fadeInUp、fadeInScale 等進場動畫
+- 🔤 **Inter 字體** - 整合 Google Fonts 專業字體
+- 🎯 **CSS 變數系統** - 完整的設計 Token 架構
+
+### 🔧 模組化架構重構
+- 📦 **ApiService** (`api-service.js`) - 統一 API 請求管理，內建快取與超時處理
+- 🎨 **ThemeManager** (`theme-manager.js`) - 主題切換、系統偏好偵測、LocalStorage 持久化
+- 📊 **ChartManager** (`chart-manager.js`) - 圖表 CRUD、Embed URL 生成、新聞彈窗
+- 🚀 **App** (`app.js`) - 主應用程式協調器，事件綁定與 UI 互動
+
+### ☁️ Serverless Backend
+- 🔥 **`/api/trending`** - Google Trends RSS 代理，徹底解決 CORS 問題
+- 📰 **`/api/news`** - Google News RSS 代理，支援關鍵字新聞搜尋
+- ⚡ **Vercel 部署就緒** - 包含 `vercel.json` 配置檔
+
+### 🆕 新增功能
+- 📰 **新聞彈窗** - 點擊圖表可查看相關 Google News
+- ⌨️ **鍵盤快捷鍵** - `Ctrl+K` 聚焦搜尋、`Ctrl+D` 切換模式
+- 🔔 **Toast 通知** - 美觀的操作回饋通知
+- 💾 **狀態持久化** - 圖表與主題設定自動儲存
+
+### 📁 檔案結構變更
+```
+新增檔案：
+├── api/
+│   ├── trending.js      # 熱門搜尋 Serverless Function
+│   └── news.js          # 新聞搜尋 Serverless Function
+├── assets/css/
+│   └── glass.css        # Glassmorphism 設計系統
+├── assets/js/
+│   ├── api-service.js   # API 請求模組
+│   ├── theme-manager.js # 主題管理模組
+│   ├── chart-manager.js # 圖表管理模組
+│   └── app.js           # 主應用程式入口
+└── vercel.json          # Vercel 部署配置
+```
+
+### ✅ 已完成計劃功能
+- [x] 深色模式主題
+- [x] 圖表新聞整合
+- [x] 模組化程式碼架構
+
+---
+
+## [1.2.0] - 2025-12-16
+
+### 新增
+- 🔥 **熱門搜尋功能**：右側顯示 10 個熱門關鍵字標籤
+- ⚡ **一鍵新增圖表**：點擊任何熱門關鍵字標籤即可快速新增圖表
+- 🌐 **CORS 代理整合**：嘗試透過多個代理服務獲取即時熱門搜尋
+- ⏱️ **超時機制**：5 秒超時確保快速回應
+
+### 修復
+- 🔧 **載入狀態修復**：預設顯示熱門關鍵字，避免永遠顯示「載入中」
+- 📊 **備用關鍵字**：台股、AI、比特幣、房價、匯率、黃金等
+
+### 改善
+- 🎨 **標籤樣式**：美化熱門關鍵字標籤的懸停效果
+- 💡 **使用提示**：「點擊關鍵字可快速新增圖表」
+
 ## [1.1.0] - 2025-12-15
 
 ### 修復
@@ -21,11 +104,10 @@
 ## [未發布]
 
 ### 計劃新增
-- [ ] 圖表設定匯入/匯出功能
-- [ ] 本地儲存使用者偏好設定
 - [ ] 深色模式主題
 - [ ] 圖表全螢幕檢視
 - [ ] 批次操作功能
+- [ ] 圖表拖放排序
 
 
 ## [1.0.0] - 2025-10-20

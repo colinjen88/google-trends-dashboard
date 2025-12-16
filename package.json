@@ -1,53 +1,48 @@
 {
   "name": "google-trends-dashboard",
-  "version": "1.0.0",
-  "description": "一個現代化的 Google Trends 資料視覺化工具，支援無限新增關鍵字圖表、響應式設計和滿版展示",
-  "main": "index.html",
+  "version": "2.1.0",
+  "description": "現代化 Google Trends 資料視覺化儀表板，支援無限圖表、即時熱搜、關鍵字排名追蹤",
+  "main": "server.js",
   "scripts": {
-    "start": "python -m http.server 8000",
-    "serve": "npx serve .",
+    "start": "node server.js",
     "dev": "npx live-server --port=8080",
+    "dev:server": "npx nodemon server.js",
     "lint": "npx eslint assets/js/",
     "format": "npx prettier --write \"**/*.{html,css,js,md}\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "echo \"靜態專案，無需建置\" && exit 0"
+    "test": "echo \"No tests configured\" && exit 0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-username/google-trends-dashboard.git"
+    "url": "git+https://github.com/colinjen88/google-trends-dashboard.git"
   },
   "keywords": [
     "google-trends",
-    "data-visualization",
     "dashboard",
     "analytics",
-    "responsive-design",
-    "javascript",
-    "html5",
-    "css3",
-    "趨勢分析",
-    "資料視覺化",
-    "儀表板"
+    "seo",
+    "rank-tracking",
+    "data-visualization"
   ],
-  "author": "GitHub Copilot",
+  "author": "Colinjen88",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/your-username/google-trends-dashboard/issues"
+    "url": "https://github.com/colinjen88/google-trends-dashboard/issues"
   },
-  "homepage": "https://github.com/your-username/google-trends-dashboard#readme",
+  "homepage": "https://github.com/colinjen88/google-trends-dashboard#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "optionalDependencies": {
+    "puppeteer": "^21.0.0"
+  },
   "devDependencies": {
     "eslint": "^8.0.0",
     "prettier": "^2.0.0",
     "live-server": "^1.2.2",
-    "serve": "^14.0.0"
+    "nodemon": "^3.0.0"
   },
   "engines": {
-    "node": ">=14.0.0"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ]
+    "node": ">=18.0.0"
+  }
 }

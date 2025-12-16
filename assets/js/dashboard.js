@@ -590,6 +590,10 @@ async function loadTrendingSearches() {
     const rssContainer = document.getElementById('rss-container');
     if (!rssContainer) return;
 
+    // 先顯示備用內容，如果 RSS 能成功載入則覆蓋
+    // 這樣可以確保用戶不會看到永遠載入中的狀態
+    displayFallbackContent(rssContainer);
+
     // Google Trends RSS 來源
     const rssUrl = 'https://trends.google.com.tw/trending/rss?geo=TW';
     
@@ -600,16 +604,22 @@ async function loadTrendingSearches() {
         `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(rssUrl)}`
     ];
 
-    rssContainer.innerHTML = '<p class="loading-message">🔄 正在載入熱門搜尋...</p>';
-
+    // 嘗試透過 CORS 代理獲取即時資料
     for (const proxyUrl of corsProxies) {
         try {
+            // 加入超時機制 (5秒)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
             const response = await fetch(proxyUrl, {
                 method: 'GET',
+                signal: controller.signal,
                 headers: {
                     'Accept': 'application/rss+xml, application/xml, text/xml'
                 }
             });
+            
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -627,7 +637,7 @@ async function loadTrendingSearches() {
 
             // 成功獲取資料，顯示熱門搜尋
             displayTrendingItems(items, rssContainer);
-            console.log('✅ 熱門搜尋載入成功');
+            console.log('✅ 熱門搜尋載入成功 (即時資料)');
             return; // 成功後退出
         } catch (error) {
             console.warn(`CORS 代理失敗: ${proxyUrl}`, error.message);
@@ -635,8 +645,8 @@ async function loadTrendingSearches() {
         }
     }
 
-    // 所有代理都失敗時，顯示備用內容
-    displayFallbackContent(rssContainer);
+    // 如果所有代理都失敗，備用內容已經顯示，這裡只需記錄
+    console.log('ℹ️ 使用備用熱門關鍵字');
 }
 
 /**

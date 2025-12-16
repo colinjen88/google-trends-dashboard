@@ -1,66 +1,109 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Google Trends 多圖表展示儀表板，支援無限新增和自訂關鍵字分析">
-    <meta name="keywords" content="Google Trends, 趨勢分析, 關鍵字, 數據視覺化, 儀表板">
-    <meta name="author" content="GitHub Copilot">
+    <meta name="description" content="Google Trends 多圖表展示儀表板 - 支援無限新增關鍵字分析、即時熱門搜尋、深色模式">
+    <meta name="keywords" content="Google Trends, 趨勢分析, 關鍵字, 數據視覺化, 儀表板, Dashboard">
+    <meta name="author" content="Colinjen88">
+    <meta name="theme-color" content="#0f0f23">
 
-    <title>Google Trends 多圖表展示儀表板</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content="Google Trends Dashboard 2.0">
+    <meta property="og:description" content="專業的 Google Trends 多圖表展示儀表板">
+    <meta property="og:type" content="website">
 
-    <!-- 外部樣式表 -->
+    <title>Google Trends Dashboard 2.0</title>
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://trends.google.com">
+
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="assets/css/glass.css">
     <link rel="stylesheet" href="assets/css/styles.css">
 
     <!-- Favicon -->
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+
+    <style>
+        /* 關鍵 CSS 內聯以避免 FOUC */
+        html {
+            background: var(--color-bg-primary);
+        }
+
+        body {
+            opacity: 0;
+            animation: fadeIn 0.3s ease forwards;
+            animation-delay: 0.1s;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- 頁面標題 -->
-    <header>
-        <h1>🚀 Google Trends 多圖表展示儀表板</h1>
+    <!-- 頁首 -->
+    <header class="header glass-card">
+        <div class="header-content">
+            <h1 class="header-title">
+                <span class="header-logo">📊</span>
+                <span>Google Trends Dashboard</span>
+                <span class="header-version">2.0</span>
+            </h1>
+            <div class="header-actions">
+                <button id="theme-toggle" class="glass-btn" title="切換主題">🌙</button>
+            </div>
+        </div>
     </header>
 
+    <!-- 主容器 -->
     <div class="container">
-        <div class="leftside">
-            <!-- 新增圖表控制面板 -->
-            <section class="add-chart-section">
-                <div class="section-header">
-                    <h3>➕ 新增 Google Trends 圖表</h3>
-                    <button type="button" class="btn-config" onclick="toggleConfigPanel()" title="圖表設定管理">
-                        📁 管理
+        <!-- 左側：控制面板 -->
+        <aside class="sidebar">
+            <!-- 新增圖表區塊 -->
+            <section class="panel glass-card">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <span class="panel-icon">➕</span>
+                        新增圖表
+                    </h2>
+                    <button type="button" class="glass-btn" onclick="App.toggleConfigPanel()" title="設定管理">
+                        ⚙️
                     </button>
                 </div>
-                <form id="add-chart-form" onsubmit="event.preventDefault(); addNewChart();" autocomplete="off">
-                    <div class="input-group">
-                        <label for="keyword-input">🔍 關鍵字 *</label>
-                        <input type="text" id="keyword-input" placeholder="輸入搜尋關鍵字（多個用逗號分隔）" required>
+
+                <form id="add-chart-form" class="form" autocomplete="off">
+                    <div class="form-group">
+                        <label for="keyword-input" class="form-label">🔍 關鍵字 *</label>
+                        <input type="text" id="keyword-input" class="glass-input" placeholder="輸入關鍵字（多個用逗號分隔）" required>
                     </div>
 
-                    <div class="input-group">
-                        <label for="title-input">📝 顯示標題</label>
-                        <input type="text" id="title-input" placeholder="自訂圖表標題（選填）">
+                    <div class="form-group">
+                        <label for="title-input" class="form-label">📝 顯示標題</label>
+                        <input type="text" id="title-input" class="glass-input" placeholder="自訂圖表標題（選填）">
                     </div>
 
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label for="geo-select">🌍 地區</label>
-                            <select id="geo-select" aria-label="選擇地區">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="geo-select" class="form-label">🌍 地區</label>
+                            <select id="geo-select" class="glass-input">
                                 <option value="TW">🇹🇼 台灣</option>
-                                <option value="CN">🇨🇳 中國</option>
                                 <option value="US">🇺🇸 美國</option>
                                 <option value="JP">🇯🇵 日本</option>
                                 <option value="KR">🇰🇷 韓國</option>
+                                <option value="CN">🇨🇳 中國</option>
                                 <option value="">🌐 全球</option>
                             </select>
                         </div>
 
-                        <div class="input-group">
-                            <label for="time-select">⏰ 時間範圍</label>
-                            <select id="time-select" aria-label="選擇時間範圍">
+                        <div class="form-group">
+                            <label for="time-select" class="form-label">⏰ 時間</label>
+                            <select id="time-select" class="glass-input">
                                 <option value="today 1-m">過去 1 個月</option>
                                 <option value="today 3-m">過去 3 個月</option>
                                 <option value="today 12-m">過去 12 個月</option>
@@ -70,139 +113,203 @@
                         </div>
                     </div>
 
-                    <div class="input-group">
-                        <label for="property-select">📱 搜尋類型</label>
-                        <select id="property-select" aria-label="選擇搜尋類型">
+                    <div class="form-group">
+                        <label for="property-select" class="form-label">📱 搜尋類型</label>
+                        <select id="property-select" class="glass-input">
                             <option value="">網頁搜尋</option>
                             <option value="images">圖片搜尋</option>
                             <option value="news">新聞搜尋</option>
-                            <option value="youtube">YouTube 搜尋</option>
+                            <option value="youtube">YouTube</option>
                             <option value="froogle">Google 購物</option>
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="glass-btn glass-btn--primary form-submit">
                         ➕ 新增圖表
                     </button>
                 </form>
 
-                <!-- 儲存說明 -->
-                <div class="storage-notice">
-                    <small>⚠️ <strong>重要：</strong>新增的圖表僅儲存在您的瀏覽器本地，建議定期匯出 CSV 備份。</small>
+                <!-- 提示訊息 -->
+                <div class="form-notice">
+                    <small>💡 提示：按 <kbd>Ctrl</kbd>+<kbd>K</kbd> 快速聚焦搜尋框</small>
                 </div>
 
-                <!-- 圖表設定面板 -->
-                <div class="config-panel" id="config-panel" style="display: none;">
+                <!-- 設定面板 -->
+                <div id="config-panel" class="config-panel">
                     <div class="config-header">
-                        <h4>📋 圖表設定檔案管理</h4>
-                        <button type="button" class="btn-close" onclick="toggleConfigPanel()">✕</button>
+                        <h3>📋 設定管理</h3>
+                        <button type="button" class="glass-btn glass-btn--sm"
+                            onclick="App.toggleConfigPanel()">✕</button>
                     </div>
                     <div class="config-content">
                         <div class="config-section">
-                            <label>📄 當前設定檔：</label>
-                            <div class="current-file-info" id="current-file-info">
-                                trends.csv
-                            </div>
+                            <label>💾 匯出設定</label>
+                            <button type="button" class="glass-btn" onclick="App.exportConfig()">
+                                下載 CSV
+                            </button>
                         </div>
                         <div class="config-section">
-                            <label>📂 載入設定檔：</label>
-                            <div class="file-upload-wrapper">
-                                <input type="file" id="config-file-input" accept=".csv" onchange="loadConfigFile(event)"
-                                    style="display: none;">
-                                <button type="button" class="btn btn-secondary"
-                                    onclick="document.getElementById('config-file-input').click()">
-                                    選擇 CSV 設定檔
-                                </button>
-                            </div>
-                            <small>支援 .csv 格式（欄位：標題,關鍵字,地區,時間範圍,表情符號）</small>
-                        </div>
-                        <div class="config-section">
-                            <label>💾 匯出當前設定：</label>
-                            <button type="button" class="btn btn-secondary" onclick="exportCurrentConfig()">
-                                下載 CSV 設定檔
+                            <label>📂 匯入設定</label>
+                            <input type="file" id="config-file-input" accept=".csv" style="display: none;">
+                            <button type="button" class="glass-btn"
+                                onclick="document.getElementById('config-file-input').click()">
+                                選擇 CSV 檔案
                             </button>
                         </div>
                     </div>
                 </div>
             </section>
-        </div>
-        <!-- 右側：RSS 熱門搜尋 -->
-        <div class="rightside">
-            <section class="rss-section">
-                <h3>🔥 台灣熱門搜尋趨勢</h3>
-                <div class="rss-container" id="rss-container">
-                    <p class="loading-message">正在載入熱門搜尋...</p>
+        </aside>
+
+        <!-- 右側：熱門搜尋 -->
+        <section class="trending-section glass-card">
+            <h2 class="panel-title">
+                <span class="panel-icon">🔥</span>
+                台灣熱門搜尋
+            </h2>
+            <div id="trending-container" class="trending-container">
+                <!-- 由 JS 動態填充 -->
+                <div class="trending-loading">
+                    <div class="skeleton" style="height: 32px; width: 80px;"></div>
+                    <div class="skeleton" style="height: 32px; width: 100px;"></div>
+                    <div class="skeleton" style="height: 32px; width: 70px;"></div>
                 </div>
-                <div class="rss-footer">
-                    <p><small>資料來源：<a href="https://trends.google.com.tw/trending/rss?geo=TW" target="_blank">Google
-                                Trends RSS</a></small></p>
+            </div>
+        </section>
+
+        <!-- 右側下方：關鍵字排名追蹤 -->
+        <section class="rank-tracker-section glass-card" id="rank-tracker-container">
+            <h2 class="panel-title">
+                <span class="panel-icon">📊</span>
+                關鍵字排名追蹤
+            </h2>
+
+            <!-- 設定區域 -->
+            <div class="rank-settings">
+                <div class="rank-setting-row">
+                    <div class="rank-setting-group">
+                        <label for="rank-domain-input" class="form-label">🌐 追蹤網域</label>
+                        <input type="text" id="rank-domain-input" class="glass-input" placeholder="example.com">
+                    </div>
+                    <div class="rank-setting-group">
+                        <label class="form-label">📄 關鍵字清單</label>
+                        <input type="file" id="rank-file-input" accept=".csv" style="display: none;">
+                        <button type="button" class="glass-btn"
+                            onclick="document.getElementById('rank-file-input').click()">
+                            上傳 CSV
+                        </button>
+                    </div>
                 </div>
-            </section>
-        </div>
+            </div>
+
+            <!-- 關鍵字列表 -->
+            <div id="rank-keyword-list" class="rank-keyword-list">
+                <div class="rank-empty">
+                    <span>📋 尚未載入關鍵字</span>
+                    <small>請上傳 CSV 檔案（第一欄為關鍵字）</small>
+                </div>
+            </div>
+
+            <!-- 操作按鈕 -->
+            <div class="rank-actions">
+                <button type="button" id="rank-check-btn" class="glass-btn glass-btn--primary">
+                    🔍 檢查排名
+                </button>
+                <button type="button" id="rank-clear-btn" class="glass-btn">
+                    🗑️ 清除
+                </button>
+            </div>
+
+            <!-- 狀態訊息 -->
+            <div id="rank-status" class="rank-status"></div>
+
+            <!-- 排名結果表格 -->
+            <div id="rank-results-table" class="rank-results">
+                <div class="rank-empty">
+                    <span>📊 尚無排名資料</span>
+                    <small>設定網域後點擊「檢查排名」</small>
+                </div>
+            </div>
+
+            <!-- 說明 -->
+            <div class="rank-notice">
+                <small>
+                    ⚠️ 本地開發顯示模擬排名。部署至 Vercel 並設定 SERPAPI_KEY 可獲得真實排名。
+                </small>
+            </div>
+        </section>
     </div>
 
-    <!-- 主要內容區域 - 圖表網格 -->
-    <main>
-        <div class="trends-grid" id="trends-grid">
-            <!-- 預設圖表 1：金條 -->
-            <article class="trends-widget" id="chart-1" data-default="true">
-                <button class="btn-remove" onclick="removeChart('chart-1')" title="移除此圖表" aria-label="移除金條圖表">✕</button>
-                <h3>📊 金條 - 搜尋趨勢</h3>
-                <iframe class="chart-iframe"
-                    src="https://trends.google.com/trends/embed/explore/TIMESERIES?req=%7B%22comparisonItem%22%3A%5B%7B%22keyword%22%3A%22%E9%87%91%E6%A2%9D%22%2C%22geo%22%3A%22TW%22%2C%22time%22%3A%22today%201-m%22%7D%5D%2C%22category%22%3A0%2C%22property%22%3A%22%22%7D&tz=-480&eq=q%3D%25E9%2587%2591%25E6%25A2%259D%26date%3Dtoday%25201-m%26geo%3DTW"
-                    title="金條 Google Trends 搜尋趨勢" loading="lazy">
+    <!-- 圖表網格 -->
+    <main class="main">
+        <div id="trends-grid" class="trends-grid">
+            <!-- 預設圖表 -->
+            <article class="trends-widget glass-card animate-fade-in-up" id="chart-default-1" data-keyword="金條">
+                <div class="widget-header">
+                    <h3 class="widget-title">
+                        <span class="widget-icon">📊</span>
+                        <span class="widget-title-text">金條</span>
+                    </h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="ChartManager.showNews('金條')" title="查看相關新聞">📰</button>
+                        <button class="widget-btn widget-btn--remove" onclick="ChartManager.remove('chart-default-1')"
+                            title="移除">✕</button>
+                    </div>
+                </div>
+                <div class="widget-meta">
+                    <span class="widget-meta-item">🇹🇼 台灣</span>
+                    <span class="widget-meta-item">⏱️ 過去1個月</span>
+                </div>
+                <iframe class="widget-iframe"
+                    src="https://trends.google.com.tw/trends/explore?q=%E9%87%91%E6%A2%9D&geo=TW&date=today%201-m&hl=zh-TW"
+                    frameborder="0" style="width: 100%; height: 400px; border: none; border-radius: 8px;"
+                    title="金條 Google Trends" sandbox="allow-scripts allow-same-origin allow-popups">
                 </iframe>
             </article>
 
-            <!-- 預設圖表 2：黃金價格 -->
-            <article class="trends-widget" id="chart-2" data-default="true">
-                <button class="btn-remove" onclick="removeChart('chart-2')" title="移除此圖表"
-                    aria-label="移除黃金價格圖表">✕</button>
-                <h3>💰 黃金價格 - 搜尋趨勢</h3>
-                <iframe class="chart-iframe"
-                    src="https://trends.google.com/trends/embed/explore/TIMESERIES?req=%7B%22comparisonItem%22%3A%5B%7B%22keyword%22%3A%22%E9%BB%83%E9%87%91%20%E5%83%B9%E6%A0%BC%22%2C%22geo%22%3A%22TW%22%2C%22time%22%3A%22today%201-m%22%7D%5D%2C%22category%22%3A0%2C%22property%22%3A%22%22%7D&tz=-480&eq=q%3D%25E9%25BB%2583%25E9%2587%2591%2520%25E5%2583%25B9%25E6%25A0%25BC%26date%3Dtoday%25201-m%26geo%3DTW"
-                    title="黃金價格 Google Trends 搜尋趨勢" loading="lazy">
-                </iframe>
-            </article>
-
-            <!-- 預設圖表 3：投資黃金 -->
-            <article class="trends-widget" id="chart-3" data-default="true">
-                <button class="btn-remove" onclick="removeChart('chart-3')" title="移除此圖表"
-                    aria-label="移除投資黃金圖表">✕</button>
-                <h3>📈 投資黃金 - 搜尋趨勢</h3>
-                <iframe class="chart-iframe"
-                    src="https://trends.google.com/trends/embed/explore/TIMESERIES?req=%7B%22comparisonItem%22%3A%5B%7B%22keyword%22%3A%22%E6%8A%95%E8%B3%87%E9%BB%83%E9%87%91%22%2C%22geo%22%3A%22TW%22%2C%22time%22%3A%22today%201-m%22%7D%5D%2C%22category%22%3A0%2C%22property%22%3A%22%22%7D&tz=-480&eq=q%3D%25E6%258A%2595%25E8%25B3%2587%25E9%25BB%2583%25E9%2587%2591%26date%3Dtoday%25201-m%26geo%3DTW"
-                    title="投資黃金 Google Trends 搜尋趨勢" loading="lazy">
-                </iframe>
-            </article>
-
-            <!-- 預設圖表 4：銀行黃金 -->
-            <article class="trends-widget" id="chart-4" data-default="true">
-                <button class="btn-remove" onclick="removeChart('chart-4')" title="移除此圖表"
-                    aria-label="移除銀行黃金圖表">✕</button>
-                <h3>🏦 銀行黃金 - 搜尋趨勢</h3>
-                <iframe class="chart-iframe"
-                    src="https://trends.google.com/trends/embed/explore/TIMESERIES?req=%7B%22comparisonItem%22%3A%5B%7B%22keyword%22%3A%22%E9%8A%80%E8%A1%8C%E9%BB%83%E9%87%91%22%2C%22geo%22%3A%22TW%22%2C%22time%22%3A%22today%201-m%22%7D%5D%2C%22category%22%3A0%2C%22property%22%3A%22%22%7D&tz=-480&eq=q%3D%25E9%258A%2580%25E8%25A1%258C%25E9%25BB%2583%25E9%2587%2591%26date%3Dtoday%25201-m%26geo%3DTW"
-                    title="銀行黃金 Google Trends 搜尋趨勢" loading="lazy">
+            <article class="trends-widget glass-card animate-fade-in-up" id="chart-default-2" data-keyword="黃金價格"
+                style="animation-delay: 0.1s;">
+                <div class="widget-header">
+                    <h3 class="widget-title">
+                        <span class="widget-icon">💰</span>
+                        <span class="widget-title-text">黃金價格</span>
+                    </h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="ChartManager.showNews('黃金價格')" title="查看相關新聞">📰</button>
+                        <button class="widget-btn widget-btn--remove" onclick="ChartManager.remove('chart-default-2')"
+                            title="移除">✕</button>
+                    </div>
+                </div>
+                <div class="widget-meta">
+                    <span class="widget-meta-item">🇹🇼 台灣</span>
+                    <span class="widget-meta-item">⏱️ 過去1個月</span>
+                </div>
+                <iframe class="widget-iframe"
+                    src="https://trends.google.com.tw/trends/explore?q=%E9%BB%83%E9%87%91%E5%83%B9%E6%A0%BC&geo=TW&date=today%201-m&hl=zh-TW"
+                    frameborder="0" style="width: 100%; height: 400px; border: none; border-radius: 8px;"
+                    title="黃金價格 Google Trends" sandbox="allow-scripts allow-same-origin allow-popups">
                 </iframe>
             </article>
         </div>
     </main>
 
-    <!-- 頁尾資訊 -->
-    <footer style="margin-top: 40px; text-align: center; padding: 20px; color: #666; border-top: 1px solid #eee;">
+    <!-- 頁尾 -->
+    <footer class="footer">
         <p>
-            <strong>Google Trends 多圖表展示儀表板</strong> |
-            版本 1.0 |
-            <a href="https://github.com" target="_blank">GitHub</a>
+            <strong>Google Trends Dashboard 2.0</strong> ·
+            <a href="https://github.com/colinjen88/google-trends-dashboard" target="_blank" rel="noopener">GitHub</a>
         </p>
-        <p style="font-size: 12px; margin-top: 10px;">
-            © 2025 由 Colinjen88 製作 | 資料來源：Google Trends
+        <p class="footer-sub">
+            © 2025 Colinjen88 · 資料來源：Google Trends
         </p>
     </footer>
 
-    <!-- JavaScript 腳本 -->
-    <script src="assets/js/dashboard.js"></script>
+    <!-- JavaScript 模組 (順序重要) -->
+    <script src="assets/js/api-service.js"></script>
+    <script src="assets/js/theme-manager.js"></script>
+    <script src="assets/js/chart-manager.js"></script>
+    <script src="assets/js/rank-tracker.js"></script>
+    <script src="assets/js/app.js"></script>
 </body>
 
 </html>
